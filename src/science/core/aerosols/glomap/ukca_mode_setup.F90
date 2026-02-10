@@ -315,11 +315,11 @@ mm=[0.098,0.012,0.0168,0.05844,0.100,0.0168]
 !          h2so4  bc     oc    nacl   dust    so
 ! n.b. mm_bc=0.012, mm_oc=mm_so=0.012*1.4=0.168 (1.4 POM:OC ratio)
 ! Mass density of components (kg m^-3)
-rhocomp = [1769.0,1500.0,1500.0,1600.0,2650.0,1500.0]
+rhocomp = [1769.0,1900.0,1500.0,1600.0,2650.0,1500.0]
 
 IF ((glomap_config%l_ukca_radaer .AND. glomap_config%l_ukca_tune_bc) .OR.      &
      (l_glomap_clim_radaer .AND. l_glomap_clim_tune_bc)) THEN
-  rhocomp(cp_bc) = rho_bc_Bond
+  rhocomp(cp_bc) = 1900.0
 END IF
 
 IF (glomap_config%l_fix_nacl_density) rhocomp(cp_cl) = rho_nacl
@@ -448,11 +448,11 @@ mm=[0.098,0.012,0.0168,0.05844,0.100,0.0168]
 !          h2so4  bc     oc    nacl   dust    so
 ! n.b. mm_bc=0.012, mm_oc=mm_so=0.012*1.4=0.168 (1.4 POM:OC ratio)
 ! Mass density of components (kg m^-3)
-rhocomp = [1769.0,1500.0,1500.0,1600.0,2650.0,1500.0]
+rhocomp = [1769.0,1900.0,1500.0,1600.0,2650.0,1500.0]
 
 IF ((glomap_config%l_ukca_radaer .AND. glomap_config%l_ukca_tune_bc) .OR.      &
      (l_glomap_clim_radaer .AND. l_glomap_clim_tune_bc)) THEN
-  rhocomp(cp_bc) = rho_bc_Bond
+  rhocomp(cp_bc) = 1900.0
 END IF
 
 IF (glomap_config%l_fix_nacl_density) rhocomp(cp_cl) = rho_nacl
@@ -580,11 +580,11 @@ mm=[0.098,0.012,0.0168,0.05844,0.100,0.0168]
 !          h2so4  bc     oc    nacl   dust    so
 ! n.b. mm_bc=0.012, mm_oc=mm_so=0.012*1.4=0.168 (1.4 POM:OC ratio)
 ! Mass density of components (kg m^-3)
-rhocomp = [1769.0,1500.0,1500.0,1600.0,2650.0,1500.0]
+rhocomp = [1769.0,1900.0,1500.0,1600.0,2650.0,1500.0]
 
 IF ((glomap_config%l_ukca_radaer .AND. glomap_config%l_ukca_tune_bc) .OR.      &
      (l_glomap_clim_radaer .AND. l_glomap_clim_tune_bc)) THEN
-  rhocomp(cp_bc) = rho_bc_Bond
+  rhocomp(cp_bc) = 1900.0
 END IF
 
 IF (glomap_config%l_fix_nacl_density) rhocomp(cp_cl) = rho_nacl
@@ -714,11 +714,11 @@ mm=[0.098,0.012,0.0168,0.05844,0.100,0.0168]
 !          h2so4  bc     oc    nacl   dust    so
 ! n.b. mm_bc=0.012, mm_oc=mm_so=0.012*1.4=0.168 (1.4 POM:OC ratio)
 ! Mass density of components (kg m^-3)
-rhocomp = [1769.0,1500.0,1500.0,1600.0,2650.0,1500.0]
+rhocomp = [1769.0,1900.0,1500.0,1600.0,2650.0,1500.0]
 
 IF ((glomap_config%l_ukca_radaer .AND. glomap_config%l_ukca_tune_bc) .OR.      &
      (l_glomap_clim_radaer .AND. l_glomap_clim_tune_bc)) THEN
-  rhocomp(cp_bc) = rho_bc_Bond
+  rhocomp(cp_bc) = 1900.0
 END IF
 
 IF (glomap_config%l_fix_nacl_density) rhocomp(cp_cl) = rho_nacl
@@ -848,11 +848,11 @@ mm=[0.098,0.012,0.0168,0.05844,0.100,0.0168]
 !          h2so4  bc     oc    nacl   dust    so
 ! n.b. mm_bc=0.012, mm_oc=mm_so=0.012*1.4=0.168 (1.4 POM:OC ratio)
 ! Mass density of components (kg m^-3)
-rhocomp = [1769.0,1500.0,1500.0,1600.0,2650.0,1500.0]
+rhocomp = [1769.0,1900.0,1500.0,1600.0,2650.0,1500.0]
 
 IF ((glomap_config%l_ukca_radaer .AND. glomap_config%l_ukca_tune_bc) .OR.      &
      (l_glomap_clim_radaer .AND. l_glomap_clim_tune_bc)) THEN
-  rhocomp(cp_bc) = rho_bc_Bond
+  rhocomp(cp_bc) = 1900.0
 END IF
 
 IF (glomap_config%l_fix_nacl_density) rhocomp(cp_cl) = rho_nacl
@@ -981,11 +981,11 @@ mm=[0.098,0.012,0.0168,0.05844,0.100,0.0168]
 !          h2so4  bc     oc    nacl   dust    so
 ! n.b. mm_bc=0.012, mm_oc=mm_so=0.012*1.4=0.168 (1.4 POM:OC ratio)
 ! Mass density of components (kg m^-3)
-rhocomp = [1769.0,1500.0,1500.0,1600.0,2650.0,1500.0]
+rhocomp = [1769.0,1900.0,1500.0,1600.0,2650.0,1500.0]
 
 IF ((glomap_config%l_ukca_radaer .AND. glomap_config%l_ukca_tune_bc) .OR.      &
      (l_glomap_clim_radaer .AND. l_glomap_clim_tune_bc)) THEN
-  rhocomp(cp_bc) = rho_bc_Bond
+  rhocomp(cp_bc) = 1900.0
 END IF
 
 IF (glomap_config%l_fix_nacl_density) rhocomp(cp_cl) = rho_nacl
@@ -1112,7 +1112,7 @@ mm=[0.098,0.012,0.0168,0.05844,0.100,0.0168]
 !          h2so4  bc     oc    nacl   dust    so
 ! n.b. mm_bc=0.012, mm_oc=mm_so=0.012*1.4=0.168 (1.4 POM:OC ratio)
 ! Mass density of components (kg m^-3)
-rhocomp = [1769.0,1500.0,1500.0,1600.0,2650.0,1500.0]
+rhocomp = [1769.0,1900.0,1500.0,1600.0,2650.0,1500.0]
 
 IF (glomap_config%l_fix_nacl_density) rhocomp(cp_cl) = rho_nacl
 
@@ -1240,11 +1240,11 @@ mm=[0.098,0.012,0.0168,0.05844,0.100,0.0168]
 !          h2so4  bc     oc    nacl   dust    so
 ! n.b. mm_bc=0.012, mm_oc=mm_so=0.012*1.4=0.168 (1.4 POM:OC ratio)
 ! Mass density of components (kg m^-3)
-rhocomp = [1769.0,1500.0,1500.0,1600.0,2650.0,1500.0]
+rhocomp = [1769.0,1900.0,1500.0,1600.0,2650.0,1500.0]
 
 IF ((glomap_config%l_ukca_radaer .AND. glomap_config%l_ukca_tune_bc) .OR.      &
      (l_glomap_clim_radaer .AND. l_glomap_clim_tune_bc)) THEN
-  rhocomp(cp_bc) = rho_bc_Bond
+  rhocomp(cp_bc) = 1900.0
 END IF
 
 IF (glomap_config%l_fix_nacl_density) rhocomp(cp_cl) = rho_nacl
@@ -1372,11 +1372,11 @@ mm=[0.098,0.012,0.0168,0.05844,0.100,0.0168]
 !          h2so4  bc     oc    nacl   dust    so
 ! n.b. mm_bc=0.012, mm_oc=mm_so=0.012*1.4=0.168 (1.4 POM:OC ratio)
 ! Mass density of components (kg m^-3)
-rhocomp = [1769.0,1500.0,1500.0,1600.0,2650.0,1500.0]
+rhocomp = [1769.0,1900.0,1500.0,1600.0,2650.0,1500.0]
 
 IF ((glomap_config%l_ukca_radaer .AND. glomap_config%l_ukca_tune_bc) .OR.      &
      (l_glomap_clim_radaer .AND. l_glomap_clim_tune_bc)) THEN
-  rhocomp(cp_bc) = rho_bc_Bond
+  rhocomp(cp_bc) = 1900.0
 END IF
 
 IF (glomap_config%l_fix_nacl_density) rhocomp(cp_cl) = rho_nacl
@@ -1516,14 +1516,14 @@ mm=[0.098, 0.012, 0.0168, 0.05844, 0.100, 0.0168, 0.062, 0.084, 0.018]
 ! n.b. mm_bc=0.012, mm_oc=0.012*1.4=0.168 (1.4 POM:OC ratio)
 
 ! Mass density of components (kg m^-3)
-rhocomp=[1769.0, 1500.0, 1500.0, 1600.0, 2650.0, 1500.0,                       &
+rhocomp=[1769.0, 1900.0, 1500.0, 1600.0, 2650.0, 1500.0,                       &
           1500.0, 1600.0, 1769.0]
 !         h2so4   bc      oc      nacl    dust    so
 !         no3     nano3   nh4
 
 IF ((glomap_config%l_ukca_radaer .AND. glomap_config%l_ukca_tune_bc) .OR.      &
      (l_glomap_clim_radaer .AND. l_glomap_clim_tune_bc)) THEN
-  rhocomp(cp_bc) = rho_bc_Bond
+  rhocomp(cp_bc) = 1900.0
 END IF
 
 IF (glomap_config%l_fix_nacl_density) THEN
