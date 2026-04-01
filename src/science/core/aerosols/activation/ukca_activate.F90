@@ -1171,7 +1171,8 @@ IF (ALLOCATED(drydiam)) THEN
             !Calculate vector position
             l = l + 1
 
-            zrdry(l,k,imode) = drydiam(i,j,k,imode)
+            ! Convert values from diameter to radius as expected by ARG method
+            zrdry(l,k,imode) = drydiam(i,j,k,imode) * 0.5
 
           END DO
         END DO
@@ -1182,8 +1183,6 @@ IF (ALLOCATED(drydiam)) THEN
 
   DEALLOCATE(drydiam)
 
-  ! Convert values from diameter to radius as expected by ARG method
-  zrdry(:,:,:) = zrdry(:,:,:) * 0.5
 
 ELSE
   cmessage = 'Aerosol Dry diameter not available from GLOMAP.' //newline//     &
