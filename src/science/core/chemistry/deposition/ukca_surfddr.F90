@@ -72,6 +72,7 @@ USE yomhook,                 ONLY:                                             &
     dr_hook
 
 !CABLE related subroutine for tile reordering
+USE jules_model_environment_mod, ONLY: lsm_id, cable
 USE cable_jules_links_mod,   ONLY: &
 tile_resort_1D, tile_resort_2D
 USE cable_surface_types_mod, ONLY: tundra_cable => tundra, ice_cable  
@@ -278,6 +279,10 @@ LOGICAL :: microb(row_length,rows)     ! True if T > 5 C and RH > 40%
 ! Number of species for which surface resistance values are not set
 INTEGER  :: n_nosurf
 
+! Loop limits that differ between JULES and CABLE
+INTEGER :: tundra_tile_start, tundra_tile_end
+INTEGER :: n_limit
+
 ! Temporary logicals (local copies)
 LOGICAL, SAVE :: l_fix_improve_drydep   ! True to fix dry deposition velocities
 LOGICAL, SAVE :: l_fix_ukca_h2dd_x      ! True to fix H2 depos. to shrub/soil
@@ -290,9 +295,6 @@ INTEGER(KIND=jpim), PARAMETER :: zhook_out = 1
 REAL(KIND=jprb)               :: zhook_handle
 
 CHARACTER(LEN=*), PARAMETER :: RoutineName='UKCA_SURFDDR'
-!CABLE_LSM:
-logical, save :: we_could_be_CABLE = .true.  
-
 
 ! Set up standard resistance array rsurf on first call only
 IF (lhook) CALL dr_hook(ModuleName//':'//RoutineName,zhook_in,zhook_handle)
@@ -381,7 +383,7 @@ IF (first) THEN
          ndl_leaf_eg      /= 5   .OR.                                          &
          c3_grass         /= 6 ) THEN
 
-      IF (.NOT. we_could_be_CABLE) THEN
+      IF (lsm_id /= cable) THEN
         ! Tile order does not match that expected
         WRITE(umMessage,'(A)') 'Tile order changed from standard setup'
         CALL umPrint(umMessage,src=RoutineName)
@@ -431,7 +433,7 @@ IF (first) THEN
          soil             /= 16   .OR.                                         &
          ice              /= 17 ) THEN
 
-      IF (.NOT. we_could_be_CABLE) THEN
+      IF (lsm_id /= cable) THEN
         ! Tile order does not match that expected
         WRITE(umMessage,'(A)') 'Tile order changed from standard setup'
         CALL umPrint(umMessage,src=RoutineName)
@@ -1343,13 +1345,14 @@ IF (first) THEN
   ! Note that further edits are required to deal with tile order below this point
   ! particularly around tundra regions 
   !if (cable_lsm) then
-  CALL tile_resort_2D(ntype,jpdd,rsurf)
-  CALL tile_resort_1D(ntype,rooh)
-  CALL tile_resort_1D(ntype,aerosol)
-  CALL tile_resort_1D(ntype,ch4_up_flux)
-  CALL tile_resort_1D(npft,h2dd_c)
-  CALL tile_resort_1D(npft,h2dd_m)
-  !end if !CABLE:LSM
+  IF (lsm_id == cable) THEN
+    CALL tile_resort_2D(ntype,jpdd,rsurf)
+    CALL tile_resort_1D(ntype,rooh)
+    CALL tile_resort_1D(ntype,aerosol)
+    CALL tile_resort_1D(ntype,ch4_up_flux)
+    CALL tile_resort_1D(npft,h2dd_c)
+    CALL tile_resort_1D(npft,h2dd_m)
+  END IF
   
   first = .FALSE.
 END IF !first
@@ -1453,6 +1456,15 @@ END DO
 
 !     Now begin assigning specific surface resistances.
 
+! Range of tiles that can be considered as tundra
+IF (lsm_id == cable) THEN
+  tundra_tile_start = tundra_cable
+  tundra_tile_end = tundra_cable
+ELSE
+  tundra_tile_start = shrub_dec
+  tundra_tile_end = shrub_eg
+END IF
+
 DO j = 1, ndepd
 
   !       O3: Change land deposition values if surface is wet;
@@ -1484,15 +1496,13 @@ DO j = 1, ndepd
           END IF
         END DO
       ELSE IF ( (ntype == 13) .OR. (ntype == 17) .OR. (ntype == 27) ) THEN
-        ! DO n = shrub_dec, shrub_eg
-          !CABLE:LSM CABLE has a dedicated tundra tile (8)
-          n = tundra_cable 
+        DO n = tundra_tile_start, tundra_tile_end
           DO i = 1, row_length
             IF (sinlat(i,k) > tundra_s_limit) THEN
               IF (todo(i,k,n))   rc(i,k,n,j)     = r_tundra(r_tundra_o3)
             END IF
           END DO
-        ! END DO
+        END DO
       ELSE
         ! ntype must equal 9, 13, 17, 27
         WRITE(cmessage,'(A)')                                                  &
@@ -1655,15 +1665,13 @@ DO j = 1, ndepd
           END IF
         END DO
       ELSE IF ( (ntype == 13) .OR. (ntype == 17) .OR. (ntype == 27) ) THEN
-        ! DO n = shrub_dec, shrub_eg
-          !CABLE:LSM CABLE has a dedicated tundra tile (8)
-          n = tundra_cable 
+        DO n = tundra_tile_start, tundra_tile_end
           DO i = 1, row_length
             IF (sinlat(i,k) > tundra_s_limit) THEN
               IF (todo(i,k,n))    rc(i,k,n,j)    = r_tundra(r_tundra_no2)
             END IF
           END DO
-        ! END DO
+        END DO
       ELSE
         ! ntype must equal 9, 13, 17, 27
         WRITE(cmessage,'(A)')                                                  &
@@ -1714,15 +1722,13 @@ DO j = 1, ndepd
           END IF
         END DO
       ELSE IF ( (ntype == 13) .OR. (ntype == 17) .OR. (ntype == 27) ) THEN
-        ! DO n = shrub_dec, shrub_eg
-          !CABLE:LSM CABLE has a dedicated tundra tile (8)
-          n = tundra_cable
+        DO n = tundra_tile_start, tundra_tile_end
           DO i = 1, row_length
             IF (sinlat(i,k) > tundra_s_limit) THEN
               IF (todo(i,k,n))   rc(i,k,n,j)    = r_tundra(r_tundra_pan)
             END IF
           END DO
-        ! END DO
+        END DO
       ELSE
         ! ntype must equal 9, 13, 17, 27
         WRITE(cmessage,'(A)')                                                  &
@@ -1773,15 +1779,13 @@ DO j = 1, ndepd
           END IF
         END DO
       ELSE IF ( (ntype == 13) .OR. (ntype == 17) .OR. (ntype == 27) ) THEN
-        ! DO n = shrub_dec, shrub_eg
-          !CABLE:LSM CABLE has a dedicated tundra tile (8)
-          n = tundra_cable 
+        DO n = tundra_tile_start, tundra_tile_end
           DO i = 1, row_length
             IF (sinlat(i,k) > tundra_s_limit) THEN
               IF (todo(i,k,n))     rc(i,k,n,j)    = r_tundra(r_tundra_pan)
             END IF
           END DO
-        ! END DO
+        END DO
       ELSE
         ! ntype must equal 9, 13, 17, 27
         WRITE(cmessage,'(A)')                                                  &
@@ -1833,15 +1837,13 @@ DO j = 1, ndepd
           END IF
         END DO
       ELSE IF ( (ntype == 13) .OR. (ntype == 17) .OR. (ntype == 27) ) THEN
-        ! DO n = shrub_dec, shrub_eg
-          !CABLE:LSM CABLE has a dedicated tundra tile (8)
-          n = tundra_cable 
+        DO n = tundra_tile_start, tundra_tile_end
           DO i = 1, row_length
             IF (sinlat(i,k) > tundra_s_limit) THEN
               IF (todo(i,k,n))     rc(i,k,n,j)    = r_tundra(r_tundra_pan)
             END IF
           END DO
-        ! END DO
+        END DO
       ELSE
         ! ntype must equal 9, 13, 17, 27
         WRITE(cmessage,'(A)')                                                  &
@@ -1893,15 +1895,13 @@ DO j = 1, ndepd
           END IF
         END DO
       ELSE IF ( (ntype == 13) .OR. (ntype == 17) .OR. (ntype == 27) ) THEN
-        ! DO n = shrub_dec, shrub_eg
-          !CABLE:LSM CABLE has a dedicated tundra tile (8)
-          n = tundra_cable 
+        DO n = tundra_tile_start, tundra_tile_end
           DO i = 1, row_length
             IF (sinlat(i,k) > tundra_s_limit) THEN
               IF (todo(i,k,n))     rc(i,k,n,j)    = r_tundra(r_tundra_pan)
             END IF
           END DO
-        ! END DO
+        END DO
       ELSE
         ! ntype must equal 9, 13, 17, 27
         WRITE(cmessage,'(A)')                                                  &
@@ -1933,9 +1933,11 @@ DO j = 1, ndepd
 
   ELSE IF (speci(nldepd(j)) == 'H2        ') THEN
 
-    WRITE(cmessage,'(A)') 'H2 deposition not implemented for CABLE yet'
-    errcode=1
-    CALL ereport(RoutineName,errcode,cmessage)
+    IF (lsm_id == cable) THEN
+      WRITE(cmessage,'(A)') 'H2 deposition not implemented for CABLE yet'
+      errcode=1
+      CALL ereport(RoutineName,errcode,cmessage)
+    END IF
     !       H2 dry dep vel has linear dependence on soil moisture
     !       Limit sm to avoid excessively high deposition velocities
     ! When l_fix_ukca_h2dd_x is retired, this could become a CASE statement
@@ -2191,9 +2193,7 @@ DO j = 1, ndepd
         ! Shrub eg  : H2 dry dep velocity has no dependence on soil moisture
         ! Shrub and bare soil are assumed to be tundra if latitude > 60N;
 
-        ! DO n = shrub_dec , shrub_eg !  DO n = 12, 13
-          !CABLE:LSM CABLE has a dedicated tundra tile (8)
-          n = tundra_cable 
+        DO n = tundra_tile_start, tundra_tile_end
           DO i = 1, row_length
             IF (todo(i,k,n) .AND. microb(i,k)) THEN
               IF (sinlat(i,k) > tundra_s_limit) THEN
@@ -2208,7 +2208,7 @@ DO j = 1, ndepd
               END IF
             END IF
           END DO
-        ! END DO
+        END DO
 
         !  Bare soil :
         ! Shrub and bare soil are assumed to be tundra if latitude > 60N;
@@ -2243,9 +2243,11 @@ DO j = 1, ndepd
 
   ELSE IF (speci(nldepd(j)) == 'CH4       ') THEN
 
-    WRITE(cmessage,'(A)') 'CH4 deposition not implemented for CABLE yet'
-    errcode=1
-    CALL ereport(RoutineName,errcode,cmessage)
+    IF (lsm_id == cable) THEN
+      WRITE(cmessage,'(A)') 'CH4 deposition not implemented for CABLE yet'
+      errcode=1
+      CALL ereport(RoutineName,errcode,cmessage)
+    END IF
     !        CH4: Calculate an uptake flux initially. The uptake
     !        flux depends on soil moisture, based on results of
     !        Reay et al. (2001). Do the PFTs Broadleaf, Needleleaf,
@@ -2572,9 +2574,11 @@ DO j = 1, ndepd
     END IF
 
   ELSE IF (speci(nldepd(j)) == 'CO        ') THEN
-    WRITE(cmessage,'(A)') 'CO deposition not implemented for CABLE yet'
-    errcode=1
-    CALL ereport(RoutineName,errcode,cmessage)
+    IF (lsm_id == cable) THEN
+      WRITE(cmessage,'(A)') 'CO deposition not implemented for CABLE yet'
+      errcode=1
+      CALL ereport(RoutineName,errcode,cmessage)
+    END IF
     !         Only assign values for CO if microbes are active.
     ! Shrub and bare soil are assumed to be tundra if latitude > 60N;
     ! When l_fix_ukca_h2dd_x is retired, this could become a CASE statement
@@ -2639,12 +2643,15 @@ DO j = 1, ndepd
     IF ( ( .NOT. l_fix_ukca_h2dd_x )                              .OR.         &
          ( (ntype == 9) .OR. (ntype == 13) .OR. (ntype == 17) ) ) THEN
 
-      ! IF ( l_fix_ukca_h2dd_x ) THEN
-      !   n = ice
-      ! ELSE
-      !   n = ntype
-      ! END IF
-      n = ice_cable
+      IF (lsm_id == cable) THEN
+        n = ice_cable
+      ELSE
+        IF ( l_fix_ukca_h2dd_x ) THEN
+          n = ice
+        ELSE
+          n = ntype
+        END IF
+      END IF
       DO k = 1, rows
         DO i = 1, row_length
           IF (todo(i,k,n)) THEN
@@ -2698,11 +2705,15 @@ DO j = 1, ndepd
            (speci(nldepd(j)) =='Sec_Org   ' .AND. (l_fix_improve_drydep)) .OR. &
            (speci(nldepd(j)) =='SEC_ORG_I ' .AND. (l_fix_improve_drydep))) THEN
 
-    ! DO n = 1, urban     ! for all the functional plant types as
-    !                     ! well as for surface type urban (n=npft+1)
-    DO n= 1, npft
-        !CABLE:LSM - restrict to pfts i.e. no urban tile
-        ! may need to add an additional case for urban n = 14
+    IF (lsm_id == cable) THEN
+      n_limit = npft
+      !CABLE:LSM - restrict to pfts i.e. no urban tile
+      ! may need to add an additional case for urban n = 14
+    ELSE
+      n_limit = urban  ! for all the functional plant types as
+                      ! well as for surface type urban (n=npft+1)
+    END IF
+    DO n= 1, n_limit
       DO k = 1, rows
         DO i = 1, row_length
           IF (so4_vd(i,k) > 0.0 .AND. gsf(i,k,n) > 0.0) THEN
